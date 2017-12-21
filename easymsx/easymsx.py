@@ -58,7 +58,7 @@ class EasyMSX:
         def as_text(self,v):
             return (self.__list[v])
 
-    nextCorId=1
+    next_cor_id=1
         
     def __init__(self, env=Environment.BETA, host="localhost",port=8194):
         self.env = env
