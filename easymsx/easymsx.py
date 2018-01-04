@@ -1,6 +1,7 @@
 # easymsx.py
 
 import blpapi
+from enum import Enum
 from .schemafielddefinition import SchemaFieldDefinition
 from .teams import Teams
 from .brokers import Brokers
@@ -31,7 +32,7 @@ SUBSCRIPTION_TERMINATED         = blpapi.Name("SubscriptionTerminated")
 
 class EasyMSX:
     
-    class Environment:
+    class Environment(Enum):
         PRODUCTION=0
         BETA=1
         
@@ -139,6 +140,9 @@ class EasyMSX:
         self.initialize_orders()
         self.initialize_routes()
         
+    def stop(self):
+        self.session.stop()
+
     def initialize_orders(self):
         self.orders.subscribe()
         
@@ -297,9 +301,6 @@ class EasyMSX:
             if not notification.consumed: 
                 h(notification)
 
-    def stop(self):
-        self.session.stop()
-        
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.
 
