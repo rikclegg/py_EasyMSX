@@ -297,6 +297,9 @@ class EasyMSX:
             if not notification.consumed: 
                 h(notification)
 
+    def stop(self):
+        self.session.stop()
+        
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.
 
