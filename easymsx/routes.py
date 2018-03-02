@@ -5,6 +5,8 @@ from .route import Route
 from .notification import Notification
 
 SUBSCRIPTION_STARTED            = blpapi.Name("SubscriptionStarted")
+ORDER_ROUTE_FIELDS              = blpapi.Name("OrderRouteFields")
+
 
 class Routes:
 
@@ -53,6 +55,10 @@ class Routes:
 #            print("Route Subscription Started...")
             return
 
+        if msg.messageType() != ORDER_ROUTE_FIELDS:
+#            print("Unexpected event...")
+            return
+        
         event_status = msg.getElementAsInteger("EVENT_STATUS")
         
         if event_status==1:      # Heartbeat

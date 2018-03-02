@@ -159,7 +159,7 @@ class EasyMSX:
 #            print("Request submitted (" + str(cID)  + "): \n" + str(req))
                 
         except Exception as err:
-            print("EasyMSX >>  Error sending request: " + str(err))
+            print("EasyMSX >>  Error submitting request: " + str(err))
             
 
     def subscribe(self, topic, message_handler):
@@ -301,6 +301,34 @@ class EasyMSX:
             if not notification.consumed: 
                 h(notification)
 
+    def send_request(self,req,message_handler=None):
+        try:
+            if message_handler==None:
+                self.external_wait=True
+                cID = self.session.sendRequest(request=req)
+                self.request_message_handlers[cID.value()] = self.process_external_response
+                while self.external_wait:
+                    pass
+                return self.external_message
+                
+            else:
+                cID = self.session.sendRequest(request=req)
+                self.request_message_handlers[cID.value()] = message_handler
+                #print("Request submitted (" + str(cID)  + "): \n" + str(req))
+                
+        except Exception as err:
+            print("EasyMSX >>  Error sending request: " + str(err))
+
+    
+    def process_external_response(self,message):
+        self.external_message = message
+        self.external_wait = False
+        
+    
+    def create_request(self, operation):
+        
+        return self.emsx_service.createRequest(operation)
+    
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.
 

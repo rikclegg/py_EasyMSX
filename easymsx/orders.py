@@ -5,6 +5,7 @@ from .order import Order
 from .notification import Notification
 
 SUBSCRIPTION_STARTED            = blpapi.Name("SubscriptionStarted")
+ORDER_ROUTE_FIELDS              = blpapi.Name("OrderRouteFields")
 
 class Orders:
 
@@ -50,9 +51,13 @@ class Orders:
         return None
     
     def process_message(self, msg):
-
+        
         if msg.messageType() == SUBSCRIPTION_STARTED:
 #            print("Order Subscription Started...")
+            return
+
+        if msg.messageType() != ORDER_ROUTE_FIELDS:
+#            print("Unexpected event...")
             return
 
         event_status = msg.getElementAsInteger("EVENT_STATUS")
