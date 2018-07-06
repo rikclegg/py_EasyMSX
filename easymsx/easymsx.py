@@ -7,6 +7,7 @@ from .teams import Teams
 from .brokers import Brokers
 from .orders import Orders
 from .routes import Routes
+from jinja2.runtime import identity
 
 # ADMIN
 SLOW_CONSUMER_WARNING           = blpapi.Name("SlowConsumerWarning")

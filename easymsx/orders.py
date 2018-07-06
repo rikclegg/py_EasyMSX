@@ -5,6 +5,7 @@ from .order import Order
 from .notification import Notification
 
 SUBSCRIPTION_STARTED            = blpapi.Name("SubscriptionStarted")
+SUBSCRIPTION_ACTIVATED            = blpapi.Name("SubscriptionStreamsActivated")
 ORDER_ROUTE_FIELDS              = blpapi.Name("OrderRouteFields")
 
 class Orders:
@@ -54,6 +55,10 @@ class Orders:
         
         if msg.messageType() == SUBSCRIPTION_STARTED:
 #            print("Order Subscription Started...")
+            return
+
+        if msg.messageType() == SUBSCRIPTION_ACTIVATED:
+#            print("Order Subscription Activated...")
             return
 
         if msg.messageType() != ORDER_ROUTE_FIELDS:
