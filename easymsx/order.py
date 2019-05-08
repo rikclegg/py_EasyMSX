@@ -3,18 +3,19 @@
 from .fields import Fields
 from .notification import Notification
 
+
 class Order:
     
     def __init__(self, parent):
         self.parent = parent
         self.sequence = 0
         self.notification_handlers = []
-        self.fields=Fields(self)
+        self.fields = Fields(self)
         
-    def field(self,field_name):
+    def field(self, field_name):
         return self.fields.field(field_name)
 
-    def add_notification_handler(self,handler):
+    def add_notification_handler(self, handler):
         self.notification_handlers.append(handler)
 
     def notify(self, notification):
@@ -24,7 +25,8 @@ class Order:
         if not notification.consumed: 
             self.parent.notify(notification)
             
-    def get_notification_category(self):
+    @staticmethod
+    def get_notification_category():
         return Notification.NotificationCategory.ORDER
     
     

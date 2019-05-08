@@ -3,18 +3,22 @@
 import blpapi
 from .order import Order
 from .notification import Notification
+import logging
 
-SUBSCRIPTION_STARTED            = blpapi.Name("SubscriptionStarted")
-SUBSCRIPTION_ACTIVATED            = blpapi.Name("SubscriptionStreamsActivated")
-ORDER_ROUTE_FIELDS              = blpapi.Name("OrderRouteFields")
+SUBSCRIPTION_STARTED = blpapi.Name("SubscriptionStarted")
+SUBSCRIPTION_ACTIVATED = blpapi.Name("SubscriptionStreamsActivated")
+ORDER_ROUTE_FIELDS = blpapi.Name("OrderRouteFields")
+
+logger = logging.getLogger(__name__)
+
 
 class Orders:
 
-    def __init__(self,easymsx):
+    def __init__(self, easymsx):
         self.easymsx = easymsx
-        self.orders=[]
+        self.orders = []
         self.field_source = self.easymsx.order_fields
-        self.initialized=False
+        self.initialized = False
         self.notification_handlers = []
         
     def __iter__(self):
@@ -23,16 +27,16 @@ class Orders:
     def subscribe(self):
         
         order_topic = self.easymsx.emsx_service_name + "/order"
-        if self.easymsx.team != None: 
+        if self.easymsx.team is not None:
             order_topic += ";team=" + self.easymsx.team.name
         order_topic += "?fields="   
         for f in self.field_source:
-            if f.name=="EMSX_ORDER_REF_ID":
+            if f.name == "EMSX_ORDER_REF_ID":
                 order_topic += "EMSX_ORD_REF_ID,"
             else:
                 order_topic += f.name + ","
             
-        order_topic = order_topic[:-1] # truncate the trailing comma character
+        order_topic = order_topic[:-1]  # truncate the trailing comma character
         
         self.easymsx.subscribe(order_topic, self.process_message)
         
@@ -54,26 +58,25 @@ class Orders:
     def process_message(self, msg):
         
         if msg.messageType() == SUBSCRIPTION_STARTED:
-#            print("Order Subscription Started...")
+            logger.info("Order Subscription Started...")
             return
 
         if msg.messageType() == SUBSCRIPTION_ACTIVATED:
-#            print("Order Subscription Activated...")
+            logger.info("Order Subscription Activated...")
             return
 
         if msg.messageType() != ORDER_ROUTE_FIELDS:
-#            print("Unexpected event...")
+            logger.warning("Unexpected event: %s", msg)
             return
 
         event_status = msg.getElementAsInteger("EVENT_STATUS")
         
-        if event_status==1:      # Heartbeat
-#            print("Order >> Heartbeat")
-            pass
-        
-        elif event_status==4:    # Initial paint
+        if event_status == 1:      # Heartbeat
+            logger.debug("Order >> Heartbeat")
+
+        elif event_status == 4:    # Initial paint
             seq_no = msg.getElementAsInteger("EMSX_SEQUENCE")
-#            print("Order >> Event(4) >> SeqNo: " + str(seq_no))
+            logger.debug("Order >> Event(4) >> SeqNo: " + str(seq_no))
             o = self.get_by_sequence_no(seq_no)
         
             if o is None:
@@ -83,9 +86,9 @@ class Orders:
         
             o.notify(Notification(Notification.NotificationCategory.ORDER, Notification.NotificationType.INITIALPAINT, o, o.fields.get_field_changes()))                     
         
-        elif event_status==6:    # New order
+        elif event_status == 6:    # New order
             seq_no = msg.getElementAsInteger("EMSX_SEQUENCE")
-#            print("Order >> Event(6) >> SeqNo: " + str(seq_no))
+            logger.debug("Order >> Event(6) >> SeqNo: " + str(seq_no))
             o = self.get_by_sequence_no(seq_no)
         
             if o is None:
@@ -95,22 +98,22 @@ class Orders:
 
             o.notify(Notification(Notification.NotificationCategory.ORDER, Notification.NotificationType.NEW, o, o.fields.get_field_changes()))                     
         
-        elif event_status==7:    # Update order
+        elif event_status == 7:    # Update order
             seq_no = msg.getElementAsInteger("EMSX_SEQUENCE")
-#            print("Order >> Event(7) >> SeqNo: " + str(seq_no))
+            logger.debug("Order >> Event(7) >> SeqNo: " + str(seq_no))
             o = self.get_by_sequence_no(seq_no)
         
             if o is None:
-#                print("WARNING >> update received for unknown order")
+                logger.warning("WARNING >> update received for unknown order")
                 o = self.create_order(seq_no)
         
             o.fields.populate_fields(msg, True)
             o.notify(Notification(Notification.NotificationCategory.ORDER, Notification.NotificationType.UPDATE, o, o.fields.get_field_changes()))                     
 
-        elif event_status==8:    # Delete/Expired order
+        elif event_status == 8:    # Delete/Expired order
             
             seq_no = msg.getElementAsInteger("EMSX_SEQUENCE")
-#            print("Order >> Event(8) >> SeqNo: " + str(seq_no))
+            logger.debug("Order >> Event(8) >> SeqNo: " + str(seq_no))
             o = self.get_by_sequence_no(seq_no)
             if o is None:
                 o = self.create_order(seq_no)
@@ -120,11 +123,11 @@ class Orders:
  
             o.notify(Notification(Notification.NotificationCategory.ORDER, Notification.NotificationType.DELETE, o, o.fields.get_field_changes()))                     
             
-        elif event_status==11:    # End of init paint
-#            print("End of ORDER INIT_PAINT")
-            self.initialized=True
+        elif event_status == 11:    # End of init paint
+            logger.info("End of ORDER INIT_PAINT")
+            self.initialized = True
             
-    def add_notification_handler(self,handler):
+    def add_notification_handler(self, handler):
         self.notification_handlers.append(handler)
         
     def notify(self, notification):
@@ -132,7 +135,9 @@ class Orders:
             if not notification.consumed: 
                 h(notification)
 
-        if not notification.consumed: self.easymsx.notify(notification)
+        if not notification.consumed:
+            self.easymsx.notify(notification)
+
 
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.

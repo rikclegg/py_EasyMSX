@@ -1,15 +1,15 @@
 # easymsx setup.py
 from distutils.core import setup
 setup(
-    name = "easymsx",
-    packages = ["easymsx"],
-    version = "1.0.0",
-    description = "EasyMSX caching model",
-    author = "Richard Clegg",
-    author_email = "rclegg2@bloomberg.net",
-    url = "https://github.com/rikclegg/py_EasyMSX",
-    keywords = ["Bloomberg API", "blpapi", "EMSX", "EMSX API", "EMSXAPI"],
-    classifiers = [
+    name="easymsx",
+    packages=["easymsx"],
+    version="1.0.1",
+    description="EasyMSX caching model",
+    author="Richard Clegg",
+    author_email="rclegg2@bloomberg.net",
+    url="https://github.com/rikclegg/py_EasyMSX",
+    keywords=["Bloomberg API", "blpapi", "EMSX", "EMSX API", "EMSXAPI"],
+    classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Development Status :: Alpha",
@@ -18,7 +18,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
-    long_description = """\
+    long_description="""\
 EasyMSX
 -------
 

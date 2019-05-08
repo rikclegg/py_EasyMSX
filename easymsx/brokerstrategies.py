@@ -2,15 +2,19 @@
 
 import blpapi
 from .brokerstrategy import BrokerStrategy
+import logging
 
 GET_BROKER_STRATEGIES = blpapi.Name("GetBrokerStrategiesWithAssetClass")
 ERROR_INFO = blpapi.Name("ErrorInfo")
 
+logger = logging.getLogger(__name__)
+
+
 class BrokerStrategies:
     
-    def __init__(self,broker):
+    def __init__(self, broker):
         self.broker = broker
-        self.strategies=[]
+        self.strategies = []
         self.load_strategies()
         
     def __iter__(self):
@@ -27,7 +31,7 @@ class BrokerStrategies:
         if msg.messageType() == ERROR_INFO:
             error_code = msg.getElementAsInteger("ERROR_CODE")
             error_message = msg.getElementAsString("ERROR_MESSAGE")
-            print("GetTeams >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code, error_message))
+            logger.error("GetTeams >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code, error_message))
 
         elif msg.messageType() == GET_BROKER_STRATEGIES:
             
@@ -35,8 +39,9 @@ class BrokerStrategies:
             
             for s in strats.values():
                 if len(s) > 0:
-                    self.strategies.append(BrokerStrategy(self,s))
-                                  
+                    self.strategies.append(BrokerStrategy(self, s))
+
+
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.
 

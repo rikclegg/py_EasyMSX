@@ -1,11 +1,16 @@
 # brokerstrategy.py
+
+import logging
 from .brokerstrategyparameters import BrokerStrategyParameters
+
+logger = logging.getLogger(__name__)
+
 
 class BrokerStrategy:
     
     def __init__(self, parent, name):
-        self.name= str(name)
-        self.parent=parent
+        self.name = str(name)
+        self.parent = parent
         self.parameters = BrokerStrategyParameters(self)
         
 

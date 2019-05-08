@@ -1,26 +1,27 @@
 # schemafielddefinition.py
 
+
 class SchemaFieldDefinition:
     
-    def __init__(self,name):
-        self.name=name
-        self.status=""
-        self.type=""
-        self.min=0
-        self.max=0
-        self.description=""
+    def __init__(self, name):
+        self.name = name
+        self.status = ""
+        self.type = ""
+        self.min = 0
+        self.max = 0
+        self.description = ""
         
     def is_static(self):
-        return (self.description.find("Static") > -1)
+        return self.description.find("Static") > -1
    
     def is_order_field(self):
-        return ((self.description.find("Order") > -1) or (self.description.find("O,R") > -1))
+        return (self.description.find("Order") > -1) or (self.description.find("O,R") > -1)
     
     def is_route_field(self):
-        return ((self.description.find("Route") > -1) or (self.description.find("O,R") > -1))
+        return (self.description.find("Route") > -1) or (self.description.find("O,R") > -1)
     
     def is_special_field(self):
-        return (self.description.find("Special") > -1)
+        return self.description.find("Special") > -1
     
 
 __copyright__ = """

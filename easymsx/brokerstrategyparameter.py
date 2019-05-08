@@ -1,12 +1,18 @@
 # brokerstrategyparameter.py
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class BrokerStrategyParameter:
     
     def __init__(self, parent, name, value, disable):
         self.name = str(name)
         self.value = value
         self.disable = disable
-        self.parent=parent
+        self.parent = parent
+
 
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.

@@ -2,10 +2,14 @@
 
 from .fieldchange import FieldChange
 from .notification import Notification
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Field:
     
-    def __init__(self,parent, name="", value=""):
+    def __init__(self, parent, name="", value=""):
         self.parent = parent
         self.__name = name
         self.__current_value = value
@@ -18,26 +22,25 @@ class Field:
     def name(self):
         return self.__name
     
-    def set_value(self,value):
+    def set_value(self, value):
         if self.__current_value != value:
-            self.current_to_old
+            self.current_to_old()
             self.__current_value = value
             self.notify(Notification(self.parent.owner.get_notification_category(), Notification.NotificationType.FIELD, self.parent.owner, [self.get_field_changed()]))                     
-            
-            
+
     def current_to_old(self):
         self.__old_value = self.__current_value
         
     def get_field_changed(self):
         
         if self.__old_value != self.__current_value:
-            fc = FieldChange(self,self.__old_value,self.__current_value)
+            fc = FieldChange(self, self.__old_value, self.__current_value)
             return fc
         else:
-#            print("Field NOT changed   Old: " + self.__old_value + "\t New: " + self.__current_value) 
+            logging.debug("Field NOT changed   Old: " + self.__old_value + "\t New: " + self.__current_value)
             return None
         
-    def add_notification_handler(self,handler):
+    def add_notification_handler(self, handler):
         self.notification_handlers.append(handler)
         
     def notify(self, notification):

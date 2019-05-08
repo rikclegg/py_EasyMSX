@@ -1,8 +1,9 @@
 # fieldchange.py
 
+
 class FieldChange:
     
-    def __init__(self,field,old_value,new_value):
+    def __init__(self, field, old_value, new_value):
         self.field = field
         self.old_value = old_value
         self.new_value = new_value

@@ -1,15 +1,20 @@
 # broker.py
 
+import logging
 from .brokerstrategies import BrokerStrategies
+
+logger = logging.getLogger(__name__)
+
 
 class Broker:
 
     def __init__(self, parent, name, asset_class):
-        #print("Loading new broker: " + str(name))
+        logger.info("Loading new broker: " + str(name))
         self.name = str(name)
         self.parent = parent
         self.asset_class = asset_class
         self.strategies = BrokerStrategies(self)
+
 
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.

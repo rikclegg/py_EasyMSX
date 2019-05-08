@@ -1,23 +1,27 @@
 # fields.py
 
 from .field import Field
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Fields:
     
-    def __init__(self,owner):
+    def __init__(self, owner):
         self.owner = owner
-        self.fields=[]
-        self.field_changes=[]
+        self.fields = []
+        self.field_changes = []
         
         self.load_fields()
         
     def load_fields(self):
 
         for sdf in self.owner.parent.field_source:
-            f = Field(self,sdf.name,"")
+            f = Field(self, sdf.name, "")
             self.fields.append(f)
 
-    def populate_fields(self,msg,dynamic_fields_only):
+    def populate_fields(self, msg, dynamic_fields_only):
         
         self.current_to_old_values()
 
@@ -36,33 +40,31 @@ class Fields:
             if dynamic_fields_only:
                 fld = None
                 for sdf in self.owner.parent.field_source:
-                    if sdf.name==field_name:
+                    if sdf.name == field_name:
                         fld = sdf
                 
-                if (not fld is None) and fld.is_static():
-                    load=False
+                if (fld is not None) and fld.is_static():
+                    load = False
                     
             if load:
                 fd = self.field(field_name)
-                if fd == None:
-                    fd = Field(self,field_name)
+                if fd is None:
+                    fd = Field(self, field_name)
                 
                 fd.set_value(f.getValueAsString())
 
-#                print("loaded field: " + fd.name() + "\tValue: " + fd.value())
+                logger.debug("loaded field: " + fd.name() + "\tValue: " + fd.value())
                 
                 fc = fd.get_field_changed()
                 if fc is not None:
-#                    print("Added field to fieldChanges list")
+                    logger.info("Added field to fieldChanges list")
                     self.field_changes.append(fc)
-                    
-        
+
     def current_to_old_values(self):
         for f in self.fields:
             f.current_to_old()
     
-            
-    def field(self,name):
+    def field(self, name):
         for f in self.fields:
             if f.name() == name:
                 return f

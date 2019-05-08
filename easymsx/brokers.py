@@ -2,15 +2,19 @@
 
 import blpapi
 from .broker import Broker
+import logging
 
 GET_BROKERS = blpapi.Name("GetBrokersWithAssetClass")
 ERROR_INFO = blpapi.Name("ErrorInfo")
 
+logger = logging.getLogger(__name__)
+
+
 class Brokers:
     
-    def __init__(self,easymsx):
+    def __init__(self, easymsx):
         self.easymsx = easymsx
-        self.brokers=[]
+        self.brokers = []
         self.load_brokers()
     
     def __iter__(self):
@@ -19,20 +23,21 @@ class Brokers:
     def load_brokers(self):
         
         req_eqty = self.easymsx.emsx_service.createRequest(str(GET_BROKERS))
-        req_eqty.set("EMSX_ASSET_CLASS","EQTY")
-        self.easymsx.submit_request(req_eqty, BrokerMessageHandler(self,"EQTY").process_message)
+        req_eqty.set("EMSX_ASSET_CLASS", "EQTY")
+        self.easymsx.submit_request(req_eqty, BrokerMessageHandler(self, "EQTY").process_message)
 
         req_opt = self.easymsx.emsx_service.createRequest(str(GET_BROKERS))
-        req_opt.set("EMSX_ASSET_CLASS","OPT")
-        self.easymsx.submit_request(req_opt, BrokerMessageHandler(self,"OPT").process_message)
+        req_opt.set("EMSX_ASSET_CLASS", "OPT")
+        self.easymsx.submit_request(req_opt, BrokerMessageHandler(self, "OPT").process_message)
 
         req_fut = self.easymsx.emsx_service.createRequest(str(GET_BROKERS))
-        req_fut.set("EMSX_ASSET_CLASS","FUT")
-        self.easymsx.submit_request(req_fut, BrokerMessageHandler(self,"FUT").process_message)
+        req_fut.set("EMSX_ASSET_CLASS", "FUT")
+        self.easymsx.submit_request(req_fut, BrokerMessageHandler(self, "FUT").process_message)
         
         req_multileg = self.easymsx.emsx_service.createRequest(str(GET_BROKERS))
-        req_multileg.set("EMSX_ASSET_CLASS","MULTILEG_OPT")
-        self.easymsx.submit_request(req_multileg, BrokerMessageHandler(self,"MULTILEG_OPT").process_message)
+        req_multileg.set("EMSX_ASSET_CLASS", "MULTILEG_OPT")
+        self.easymsx.submit_request(req_multileg, BrokerMessageHandler(self, "MULTILEG_OPT").process_message)
+
 
 class BrokerMessageHandler:
     
@@ -45,14 +50,14 @@ class BrokerMessageHandler:
         if msg.messageType() == ERROR_INFO:
             error_code = msg.getElementAsInteger("ERROR_CODE")
             error_message = msg.getElementAsString("ERROR_MESSAGE")
-            print("GetBrokers >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code,error_message))
+            logger.error("GetBrokers >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code, error_message))
 
         elif msg.messageType() == GET_BROKERS:
             
             bkrs = msg.getElement("EMSX_BROKERS")
             
             for b in bkrs.values():
-                self.brokers.brokers.append(Broker(self.brokers,b,self.asset_class))
+                self.brokers.brokers.append(Broker(self.brokers, b, self.asset_class))
                 
                                   
 __copyright__ = """

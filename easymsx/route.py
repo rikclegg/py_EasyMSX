@@ -3,6 +3,7 @@
 from .fields import Fields
 from .notification import Notification
 
+
 class Route:
     
     def __init__(self, parent):
@@ -10,12 +11,12 @@ class Route:
         self.sequence = 0
         self.route_id = 0
         self.notification_handlers = []
-        self.fields=Fields(self)
+        self.fields = Fields(self)
         
-    def field(self,field_name):
+    def field(self, field_name):
         return self.fields.field(field_name)
 
-    def add_notification_handler(self,handler):
+    def add_notification_handler(self, handler):
         self.notification_handlers.append(handler)
 
     def notify(self, notification):
@@ -25,7 +26,8 @@ class Route:
         if not notification.consumed: 
             self.parent.notify(notification)
 
-    def get_notification_category(self):
+    @staticmethod
+    def get_notification_category():
         return Notification.NotificationCategory.ROUTE
     
 

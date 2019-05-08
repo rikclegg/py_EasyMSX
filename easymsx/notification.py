@@ -1,30 +1,37 @@
 # notification.py
 from enum import Enum
 
+
 class Notification:
 
     class NotificationCategory(Enum):
-        ORDER=0
-        ROUTE=1
-        ADMIN=2
+        ORDER = 0
+        ROUTE = 1
+        ADMIN = 2
         
     class NotificationType(Enum):
-        NEW=0
-        INITIALPAINT=1
-        UPDATE=2
-        DELETE=3
-        CANCEL=4
-        ERROR=5
-        FIELD=6
+        NEW = 0
+        INITIALPAINT = 1
+        UPDATE = 2
+        DELETE = 3
+        CANCEL = 4
+        ERROR = 5
+        FIELD = 6
 
-    def __init__(self,notification_category,notification_type,notification_source,field_changes=[],error_code=0,error_message=""):
+    def __init__(self, notification_category, notification_type, notification_source, field_changes=None, error_code=0, error_message=""):
+
         self.category = notification_category
         self.type = notification_type
         self.source = notification_source
-        self.field_changes = field_changes
+
+        if field_changes is None:
+            self.field_changes = []
+        else:
+            self.field_changes = field_changes
+
         self.error_code = error_code
         self.error_message = error_message
-        self.consumed=False
+        self.consumed = False
 
 
 __copyright__ = """

@@ -2,15 +2,19 @@
 
 import blpapi
 from .team import Team
+import logging
 
 GET_TEAMS = blpapi.Name("GetTeams")
 ERROR_INFO = blpapi.Name("ErrorInfo")
 
+logger = logging.getLogger(__name__)
+
+
 class Teams:
     
-    def __init__(self,easymsx):
+    def __init__(self, easymsx):
         self.easymsx = easymsx
-        self.teams=[]
+        self.teams = []
         self.load_teams()
 
     def __iter__(self):
@@ -26,22 +30,23 @@ class Teams:
         if msg.messageType() == ERROR_INFO:
             error_code = msg.getElementAsInteger("ERROR_CODE")
             error_message = msg.getElementAsString("ERROR_MESSAGE")
-            print("GetTeams >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code,error_message))
+            logger.error("GetTeams >> ERROR CODE: %d\tERROR MESSAGE: %s" % (error_code, error_message))
 
         elif msg.messageType() == GET_TEAMS:
             
             tms = msg.getElement("TEAMS")
             
             for t in tms.values():
-                self.teams.append(Team(self,t))
+                self.teams.append(Team(self, t))
                 
-    def get(self,team_name):
+    def get(self, team_name):
         for t in self.teams:
             if t.name == team_name:
                 return t
         
         return None
-                                  
+
+
 __copyright__ = """
 Copyright 2017. Bloomberg Finance L.P.
 

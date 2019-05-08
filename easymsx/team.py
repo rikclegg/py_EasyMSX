@@ -1,11 +1,16 @@
 # team.py
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class Team:
     
     def __init__(self, parent, name):
-        self.name= str(name)
-        self.parent=parent
-#        print("Creating team: " + self.name)
+        self.name = str(name)
+        self.parent = parent
+        logger.debug("Creating team: " + self.name)
         
     def select(self):
         self.parent.easymsx.set_team(self)
